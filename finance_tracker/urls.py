@@ -14,12 +14,29 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# from django.contrib import admin
+# from django.urls import path, include
+
+# urlpatterns = [
+   
+#     path('users/', include('users.urls')),  # Routes for user management
+#     path('expenses/', include('expenses.urls')),  # Routes for expense management
+# ]
+# finance_tracker/urls.py
+
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
 
-urlpatterns = [
-    path('admin/', admin.site.urls),  # Django admin panel
-    path('users/', include('users.urls')),  # Routes for user management
-    path('expenses/', include('expenses.urls')),  # Routes for expense management
-]
+def root_redirect(request):
+    if request.user.is_authenticated:
+        return redirect('expenses:dashboard')  # Logged-in users
+    return redirect('users:login')  # Guests
 
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('users/', include('users.urls')),
+    path('expenses/', include('expenses.urls')),
+    path('', root_redirect),  # Root URL handling
+]
